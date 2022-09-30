@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 import world.ntdi.kits.Kits;
 import world.ntdi.kits.data.Kit;
+import world.ntdi.kits.gui.KitsGui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,7 +109,7 @@ public class KitsCommand implements CommandExecutor, TabCompleter {
                     }
                 } else if (subCMD.equals("viewgui")) {
                     if (hasPerms(p, getPerm("permissions.view-kit-gui"))) {
-                        p.sendMessage(primaryColor + "Coming Soon!");
+                        new KitsGui(p, kits);
                     }
                 } else if (subCMD.equals("equip")) {
                     if (hasPerms(p, getPerm("permissions.kit-equip"))) {

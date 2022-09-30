@@ -43,13 +43,13 @@ public class Kit {
         return items;
     }
 
-    private Cache<UUID, Long> cooldowns = CacheBuilder.newBuilder().expireAfterWrite(cooldown, TimeUnit.MINUTES).build();
+    private Cache<UUID, Long> cooldowns = CacheBuilder.newBuilder().expireAfterWrite(getCooldown(), TimeUnit.MINUTES).build();
 
     public void equip(Player p, String primaryColor, String secondaryColor) {
         if (!cooldowns.asMap().containsKey(p.getUniqueId())) {
             p.getInventory().addItem(getItems());
             p.sendMessage(primaryColor + "Successfully equipped " + getColorfulName());
-            cooldowns.put(p.getUniqueId(), System.currentTimeMillis() + ((long) cooldown * 60 * 1000));
+            cooldowns.put(p.getUniqueId(), System.currentTimeMillis() + ((long) getCooldown() * 60 * 1000));
         } else {
             long distance = cooldowns.asMap().get(p.getUniqueId()) - System.currentTimeMillis();
             p.sendMessage(primaryColor + "You must wait " + secondaryColor + TimeUnit.MILLISECONDS.toMinutes(distance) + "m " + primaryColor + "until you can use this again.");

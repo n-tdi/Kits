@@ -48,7 +48,7 @@ public class JsonUtil {
     }
 
     public void storeKits() {
-        if (kitList.size() > 0) {
+        if (!kitList.isEmpty()) {
             Writer writer = null;
             try {
                 String json = gson.toJson(kitList);
