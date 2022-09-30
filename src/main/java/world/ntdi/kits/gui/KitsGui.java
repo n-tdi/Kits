@@ -2,6 +2,7 @@ package world.ntdi.kits.gui;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import redempt.redlib.inventorygui.InventoryGUI;
 import redempt.redlib.inventorygui.ItemButton;
 import redempt.redlib.itemutils.ItemBuilder;
@@ -27,10 +28,14 @@ public class KitsGui {
         int start = 10;
         for (Kit kit : kits.jsonUtil.getKits()) {
             ItemButton kitBtn = ItemButton.create(
-                    new ItemBuilder(kit.getIcon()).setName(kit.getColorfulName()),
+                    new ItemBuilder(kit.getIcon()).setName(kit.getColorfulName()).setLore(secondaryColor + "RIGHTCLICK " + primaryColor + "to inspect this kit!"),
                     (e) -> {
                         p.closeInventory();
-                        new InspectKitGui(p, kit, kits);
+                        if (e.getClick().equals(ClickType.RIGHT)) {
+                            new InspectKitGui(p, kit, kits);
+                        } else {
+                            p.performCommand("/kits equip " + kit.getName());
+                        }
                     }
                 );
             gui.addButton(kitBtn, start);

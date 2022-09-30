@@ -1,7 +1,10 @@
 package world.ntdi.kits.commands;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -10,15 +13,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.StringUtil;
 import world.ntdi.kits.Kits;
 import world.ntdi.kits.data.Kit;
 import world.ntdi.kits.gui.KitsGui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class KitsCommand implements CommandExecutor, TabCompleter {
     private final String primaryColor;
@@ -118,6 +118,7 @@ public class KitsCommand implements CommandExecutor, TabCompleter {
                             for (Kit kit : kits.jsonUtil.getKits()) {
                                 if (kit.getName().equals(name) || ChatColor.stripColor(kit.getColorfulName()).equals(name)) {
                                     kit.equip(p, primaryColor, secondaryColor);
+                                    return true;
                                 }
                             }
                             p.sendMessage(primaryColor + "Could not find kit!");
@@ -170,5 +171,20 @@ public class KitsCommand implements CommandExecutor, TabCompleter {
             return completions;
         }
         return List.of("");
+    }
+
+    private HashMap<HashMap<UUID, Kit>, Long> cooldowns = new HashMap<>();
+
+    public void equip(Player p, Kit kit) {
+        if (!cooldowns.containsKey(new HashMap<UUID, Kit>(){{put(p.getUniqueId(), kit);}})) {
+            p.getInventory().addItem(kit.getItems());
+            p.sendMessage(primaryColor + "Successfully equipped " + kit.getColorfulName());
+            cooldowns.put(new HashMap<>() {{
+                put(p.getUniqueId(), kit);
+            }}, System.currentTimeMillis() + ((long) kit.getCooldown() * 60 * 1000));
+        } else {
+            long distance = cooldowns.get(new HashMap<UUID, Kit>(){{put(p.getUniqueId(), kit);}}) - System.currentTimeMillis();
+            p.sendMessage(primaryColor + "You must wait " + secondaryColor + TimeUnit.MILLISECONDS.toMinutes(distance) + "m " + primaryColor + "until you can use this again.");
+        }
     }
 }
