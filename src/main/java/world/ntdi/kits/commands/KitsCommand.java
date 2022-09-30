@@ -116,9 +116,7 @@ public class KitsCommand implements CommandExecutor, TabCompleter {
                             String name = argBuilder(args, 1);
                             for (Kit kit : kits.jsonUtil.getKits()) {
                                 if (kit.getName().equals(name) || ChatColor.stripColor(kit.getColorfulName()).equals(name)) {
-                                    p.getInventory().addItem(kit.getItems());
-                                    p.sendMessage(primaryColor + "Successfully equipped " + kit.getColorfulName());
-                                    return true;
+                                    kit.equip(p, primaryColor, secondaryColor);
                                 }
                             }
                             p.sendMessage(primaryColor + "Could not find kit!");

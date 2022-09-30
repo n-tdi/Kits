@@ -1,9 +1,14 @@
 package world.ntdi.kits.data;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class Kit {
     private String name;
@@ -36,5 +41,18 @@ public class Kit {
 
     public ItemStack[] getItems() {
         return items;
+    }
+
+    private Cache<UUID, Long> cooldowns = CacheBuilder.newBuilder().expireAfterWrite(cooldown, TimeUnit.MINUTES).build();
+
+    public void equip(Player p, String primaryColor, String secondaryColor) {
+        if (!cooldowns.asMap().containsKey(p.getUniqueId())) {
+            p.getInventory().addItem(getItems());
+            p.sendMessage(primaryColor + "Successfully equipped " + getColorfulName());
+            cooldowns.put(p.getUniqueId(), System.currentTimeMillis() + ((long) cooldown * 60 * 1000));
+        } else {
+            long distance = cooldowns.asMap().get(p.getUniqueId()) - System.currentTimeMillis();
+            p.sendMessage(primaryColor + "You must wait " + secondaryColor + TimeUnit.MILLISECONDS.toMinutes(distance) + "m " + primaryColor + "until you can use this again.");
+        }
     }
 }
