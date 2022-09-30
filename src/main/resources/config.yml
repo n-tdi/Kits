@@ -1,0 +1,12 @@
+permissions:
+  # all permission will be kits.*
+  kits-help: "kits.help"
+  create-kit: "kits.create"
+  remove-kit: "kits.remove"
+  view-kit: "kits.view"
+  view-kit-gui: "kits.viewgui"
+  kit-equip: "kits.equip"
+
+colors:
+  primary-color: "&c"
+  secondary-color: "&6"

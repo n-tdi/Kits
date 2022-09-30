@@ -1,0 +1,13 @@
+name: Kits
+version: '${project.version}'
+main: world.ntdi.kits.Kits
+api-version: 1.17
+prefix: Kits
+authors: [ Ntdi ]
+description: Kits Plugin
+website: ntdi.world
+commands:
+  kits:
+    permission: kits.use
+    description: Kit command for all your kit needs.
+    usage: /kits
